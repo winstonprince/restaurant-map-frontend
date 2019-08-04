@@ -1,17 +1,17 @@
 <template>
     <fragment>
         <GmapMap ref="mapRef" :center="center" :zoom="zoom" map-type-id="terrain" style="width: 100%; height: 100%;" :options="{
-                                            mapTypeControl: true,
-                                            zoomControl: true,
-                                            streetViewControl: true,
-                                            scaleControl: false,
-                                            rotateControl: true,
-                                            fullscreenControl: false,
-                                            disableDefaultUi: false,
-                                            mapTypeControlOptions: {
-                                            position: 3
-                                            },
-                                        }">
+            mapTypeControl: true,
+            zoomControl: true,
+            streetViewControl: true,
+            scaleControl: false,
+            rotateControl: true,
+            fullscreenControl: false,
+            disableDefaultUi: false,
+            mapTypeControlOptions: {
+            position: 3
+            },
+        }">
             <gmap-info-window :options="infoOptions" :position="infoWindowPos" :opened="infoWinOpen" @closeclick="infoWinOpen=false"></gmap-info-window>
             <GmapMarker :key="index" v-for="(m, index) in markers" :position="m.position" :clickable="true" :draggable="false" @click="toggleInfoWindow(m,index)" :icon="icon" />
         </GmapMap>
@@ -51,7 +51,7 @@ export default {
     data() {
         return {
             textsearch: 'Bangsue.',
-            select_placeid: null,
+            select_placeid: '',
             zoom: 11,
             center: {
                 lat: 13.804040,
