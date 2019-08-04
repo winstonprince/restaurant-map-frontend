@@ -83,6 +83,7 @@ body {
     // }
     .form-control {
         padding: 0px;
+        border-radius: 0px;
     }
     .autocomplete__box {
         height: 100%;
@@ -105,6 +106,9 @@ body {
     .autocomplete__icon img {
         margin-top: -20px;
     }
+    // .autocomplete--clear {
+    //     display: none;
+    // }
     .btn {
         border-top-left-radius: 0px;
         border-bottom-left-radius: 0px;

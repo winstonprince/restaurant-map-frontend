@@ -1,17 +1,17 @@
 <template>
     <fragment>
         <GmapMap ref="mapRef" :center="center" :zoom="zoom" map-type-id="terrain" style="width: 100%; height: 100%;" :options="{
-                                    mapTypeControl: true,
-                                    zoomControl: true,
-                                    streetViewControl: true,
-                                    scaleControl: false,
-                                    rotateControl: true,
-                                    fullscreenControl: false,
-                                    disableDefaultUi: false,
-                                    mapTypeControlOptions: {
-                                    position: 3
-                                    },
-                                }">
+                                            mapTypeControl: true,
+                                            zoomControl: true,
+                                            streetViewControl: true,
+                                            scaleControl: false,
+                                            rotateControl: true,
+                                            fullscreenControl: false,
+                                            disableDefaultUi: false,
+                                            mapTypeControlOptions: {
+                                            position: 3
+                                            },
+                                        }">
             <gmap-info-window :options="infoOptions" :position="infoWindowPos" :opened="infoWinOpen" @closeclick="infoWinOpen=false"></gmap-info-window>
             <GmapMarker :key="index" v-for="(m, index) in markers" :position="m.position" :clickable="true" :draggable="false" @click="toggleInfoWindow(m,index)" :icon="icon" />
         </GmapMap>
@@ -20,7 +20,7 @@
             <div class="form-row align-items-center">
     
                 <div class="col-md-9 col-9 pl-0 pr-0">
-                    <autocomplete ref="autocomplete" class="form-control" source="https://testscg-api.rawinby.com/api/restaurant/" placeholder="Bangsue." results-property="data" results-display="name" v-model="textsearch" @selected="selectRestaurant">
+                    <autocomplete ref="autocomplete" class="form-control" source="https://restaurant-map-api.rawinby.com/api/restaurant/" placeholder="Bangsue." results-property="data" results-display="name" v-model="textsearch" @selected="selectRestaurant" @clear="autocomplete_clear">
                     </autocomplete>
                 </div>
     
@@ -76,6 +76,19 @@ export default {
         btnSearchRestaurant() {
             this.selectRestaurant(this.select_placeid);
         },
+        autocomplete_clear() {
+            this.select_placeid = '';
+            if (this.markers.length > 0) {
+                // console.info('markers =', this.markers);
+                this.$refs.mapRef.$mapPromise.then((map) => {
+                    // console.info('mapRef =', map)
+                    map.panTo({ lat: parseFloat(this.center.lat), lng: parseFloat(this.center.lng) });
+                    map.setZoom(12);
+                });
+                this.closeInfoWindow(this.markers[0], 0); //trigger open info window
+                this.markers = [];
+            }
+        },
         selectRestaurant(place) {
             let placeid = '';
             if (typeof(place) == 'object') {
@@ -92,7 +105,7 @@ export default {
 
                 if (Vue.ls.get('placeid:' + placeid)) { //Get Data From Storage
 
-                    let item = JSON.parse( Vue.ls.get('placeid:' + placeid) );
+                    let item = JSON.parse(Vue.ls.get('placeid:' + placeid));
                     let marker_arr = [];
                     marker_arr.push({
                         position: {
@@ -111,8 +124,6 @@ export default {
                             map.setZoom(12);
                         });
                         this.openInfoWindow(this.markers[0], 0); //trigger open info window
-                        // this.$refs.autocomplete.clear();
-                        this.select_placeid = '';
                     }
 
                 } else {
@@ -142,8 +153,6 @@ export default {
                                     map.setZoom(12);
                                 });
                                 this.openInfoWindow(this.markers[0], 0); //trigger open info window
-                                // this.$refs.autocomplete.clear();
-                                this.select_placeid = '';
                             }
                         }
                     });
@@ -155,6 +164,11 @@ export default {
             this.infoWindowPos = marker.position;
             this.infoOptions.content = marker.infoText;
             this.infoWinOpen = true;
+        },
+        closeInfoWindow: function(marker, idx) {
+            this.infoWindowPos = marker.position;
+            this.infoOptions.content = marker.infoText;
+            this.infoWinOpen = false;
             this.currentMidx = idx;
         },
         toggleInfoWindow: function(marker, idx) {
