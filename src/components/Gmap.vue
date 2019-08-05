@@ -87,7 +87,7 @@ export default {
                 this.$refs.mapRef.$mapPromise.then((map) => {
                     // console.info('mapRef =', map)
                     map.panTo({ lat: parseFloat(this.center.lat), lng: parseFloat(this.center.lng) });
-                    map.setZoom(8);
+                    map.setZoom(this.zoom);
                 });
                 this.closeInfoWindow(this.markers[0], 0); //trigger open info window
                 this.markers = [];
