@@ -1,19 +1,19 @@
 <template>
     <fragment>
         <GmapMap ref="mapRef" :center="center" :zoom="zoom" map-type-id="terrain" style="width: 100%; height: 100%;" :options="{
-            mapTypeControl: true,
-            zoomControl: true,
-            streetViewControl: true,
-            scaleControl: false,
-            rotateControl: true,
-            fullscreenControl: false,
-            disableDefaultUi: false,
-            mapTypeControlOptions: {
-            position: 3
-            },
-        }">
+                mapTypeControl: true,
+                zoomControl: true,
+                streetViewControl: true,
+                scaleControl: false,
+                rotateControl: true,
+                fullscreenControl: false,
+                disableDefaultUi: false,
+                mapTypeControlOptions: {
+                position: 3
+                },
+            }">
             <gmap-info-window :options="infoOptions" :position="infoWindowPos" :opened="infoWinOpen" @closeclick="infoWinOpen=false"></gmap-info-window>
-            <GmapMarker :key="index" v-for="(m, index) in markers" :position="m.position" :clickable="true" :draggable="false" @click="toggleInfoWindow(m,index)" :icon="icon" />
+            <GmapMarker :key="index" v-for="(m, index) in markers" :position="m.position" :clickable="true" :draggable="false" @click="toggleInfoWindow(m,index)" :icon="markerOptions" />
         </GmapMap>
     
         <div class="search-map">
@@ -69,7 +69,11 @@ export default {
                 }
             },
             markers: [],
-            icon: require('../assets/img/marker.png')
+            markerOptions: {
+                url: null,
+                size: { width: 16, height: 16, f: 'px', b: 'px', },
+                scaledSize: { width: 30, height: 45, f: 'px', b: 'px', },
+            },
         }
     },
     methods: {
@@ -83,7 +87,7 @@ export default {
                 this.$refs.mapRef.$mapPromise.then((map) => {
                     // console.info('mapRef =', map)
                     map.panTo({ lat: parseFloat(this.center.lat), lng: parseFloat(this.center.lng) });
-                    map.setZoom(12);
+                    map.setZoom(8);
                 });
                 this.closeInfoWindow(this.markers[0], 0); //trigger open info window
                 this.markers = [];
@@ -112,8 +116,13 @@ export default {
                             lat: parseFloat(item.geometry.location.lat),
                             lng: parseFloat(item.geometry.location.lng)
                         },
-                        infoText: '<div class="marker_name"><img width="18" src="' + item.icon + '"/> ' + item.name + '</div><hr/><div class="marker_desc">' + item.adr_address + '</div> ' + (item.formatted_phone_number ? '<div>Tel: ' + item.formatted_phone_number + '</div>' : '') + ''
+                        infoText: '<div class="marker_name"><img width="18" src="' + item.icon + '"/> ' + item.name + '</div><hr/><div class="marker_desc">' + item.adr_address + '</div> ' + (item.formatted_phone_number ? '<div>Tel: ' + item.formatted_phone_number + '</div>' : '') + '',
                     });
+                    this.markerOptions = {
+                        url: item.icon,
+                        size: {width: 30, height: 30},
+                        scaledSize: {width: 30, height: 30},
+                    };
 
                     if (marker_arr.length > 0) {
                         this.markers = marker_arr;
@@ -121,7 +130,7 @@ export default {
                         this.$refs.mapRef.$mapPromise.then((map) => {
                             // console.info('mapRef =', map)
                             map.panTo({ lat: parseFloat(marker_arr[0].position.lat), lng: parseFloat(marker_arr[0].position.lng) });
-                            map.setZoom(12);
+                            map.setZoom(17);
                         });
                         this.openInfoWindow(this.markers[0], 0); //trigger open info window
                     }
@@ -143,6 +152,11 @@ export default {
                                 },
                                 infoText: '<div class="marker_name"><img width="18" src="' + item.icon + '"/> ' + item.name + '</div><hr/><div class="marker_desc">' + item.adr_address + '</div> ' + (item.formatted_phone_number ? '<div>Tel: ' + item.formatted_phone_number + '</div>' : '') + ''
                             });
+                            this.markerOptions = {
+                                url: item.icon,
+                                size: {width: 30, height: 30},
+                                scaledSize: {width: 30, height: 30},
+                            };
 
                             if (marker_arr.length > 0) {
                                 this.markers = marker_arr;
